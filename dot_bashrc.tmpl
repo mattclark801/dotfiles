@@ -42,8 +42,10 @@ export FZF_DEFAULT_OPTS='
 '
 
 # fnm
+export PATH="$HOME/.local/share/fnm:$PATH"
 if command -v fnm &> /dev/null; then
   eval "$(fnm env --use-on-cd)"
+  fnm use default &> /dev/null
 fi
 
 # Zoxide

@@ -1,17 +1,17 @@
 add_newline = false
 
 [character]
-success_symbol = "[➜](bold green)"
-error_symbol = "[✗](bold red)"
+success_symbol = "[➜](bold #859900)"
+error_symbol = "[✗](bold #dc322f)"
 
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold cyan"
+style = "bold #268bd2"
 
 [git_branch]
 symbol = " "
-style = "bold yellow"
+style = "bold #b58900"
 
 [git_status]
-style = "bold red"
+style = "bold #cb4b16"
