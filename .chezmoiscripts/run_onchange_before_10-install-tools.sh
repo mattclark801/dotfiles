@@ -68,17 +68,41 @@ else
   echo "glow already installed."
 fi
 
-# 7. Gemini CLI (via fnm & npm)
-if ! command -v gemini &>/dev/null; then
-  echo "Installing Gemini CLI..."
-  export PATH="$HOME/.local/share/fnm:$PATH"
-  eval "$(fnm env --use-on-cd)"
-  fnm install --lts
-  fnm default lts-latest
-  fnm use default
-  npm install -g @google/gemini-cli
+# Ensure sync root exists
+mkdir -p "$HOME/Sync"
+
+# 8. Syncthing (official APT repo)
+if ! command -v syncthing &>/dev/null; then
+  echo "Installing Syncthing..."
+  sudo mkdir -p /etc/apt/keyrings
+  sudo curl -fsSL -o /etc/apt/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list > /dev/null
+  sudo apt-get update -qq && sudo apt-get install -y -qq syncthing
 else
-  echo "Gemini CLI already installed."
+  echo "Syncthing already installed."
+fi
+
+# 9. Typst (pre-compiled binary to ~/.local/bin)
+if ! command -v typst &>/dev/null; then
+  echo "Installing Typst..."
+  TYPST_VERSION=$(curl -fsSL https://api.github.com/repos/typst/typst/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+  curl -fsSL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" | tar -xJ -C /tmp
+  mkdir -p "$HOME/.local/bin"
+  mv "/tmp/typst-x86_64-unknown-linux-musl/typst" "$HOME/.local/bin/typst"
+  rm -rf "/tmp/typst-x86_64-unknown-linux-musl"
+else
+  echo "Typst already installed."
+fi
+
+# 10. Quarto CLI (.deb release)
+if ! command -v quarto &>/dev/null; then
+  echo "Installing Quarto..."
+  QUARTO_VERSION=$(curl -fsSL https://api.github.com/repos/quarto-dev/quarto-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+  curl -fsSL -o /tmp/quarto.deb "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb"
+  sudo apt-get install -y -qq /tmp/quarto.deb
+  rm -f /tmp/quarto.deb
+else
+  echo "Quarto already installed."
 fi
 
 echo "==> All tools provisioned."
