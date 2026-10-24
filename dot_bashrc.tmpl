@@ -12,7 +12,7 @@ export VISUAL="vim"
 # Modern replacements
 alias ls="eza --icons --group-directories-first"
 alias ll="eza -la --icons --octal-permissions --group-directories-first"
-alias lt="eza --tree --level=2 --icons"
+alias lt="eza --tree --level=2 --icons=auto"
 alias cat="bat --paging=never"
 
 # FZF integration with ripgrep
@@ -21,10 +21,6 @@ if command -v rg &> /dev/null; then
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
-# Zoxide
-if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash)"
-fi
 
 # FZF shell keybindings (Ctrl-R, Ctrl-T, Alt-C)
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
@@ -33,4 +29,19 @@ fi
 # Starship prompt
 if command -v starship &> /dev/null; then
     eval "$(starship init bash)"
+fi
+
+# Theme integrations
+export BAT_THEME="Solarized (dark)"
+
+# Solarized Dark styling for FZF
+export FZF_DEFAULT_OPTS='
+  --color=bg+:#073642,bg:#002b36,spinner:#859900,hl:#268bd2
+  --color=fg:#839496,header:#586e75,info:#b58900,pointer:#268bd2
+  --color=marker:#2aa198,fg+:#eee8d5,prompt:#b58900,hl+:#268bd2
+'
+
+# Zoxide
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init bash)"
 fi
