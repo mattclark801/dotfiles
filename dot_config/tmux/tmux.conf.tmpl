@@ -1,0 +1,38 @@
+# Prefix: Ctrl-a
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+# Ergonomics
+set -g mouse on
+set -g base-index 1
+setw -g pane-base-index 1
+set -g renumber-windows on
+set -g default-terminal "tmux-256color"
+set -ga terminal-overrides ",*256col*:Tc"
+set -s escape-time 0
+set -g history-limit 50000
+
+# Vi mode navigation & copy
+setw -g mode-keys vi
+bind -T copy-mode-vi v send -X begin-selection
+
+{{- if (contains "WSL" .chezmoi.kernel.osrelease) }}
+# WSL -> Windows system clipboard bridge
+bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clip.exe"
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "clip.exe"
+{{- else }}
+# Standard Linux X11/Wayland clipboard fallback
+bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
+{{- end }}
+
+# TPM Plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+
+# Auto-restore sessions on Tmux start
+set -g @continuum-restore 'on'
+
+run '~/.tmux/plugins/tpm/tpm'
