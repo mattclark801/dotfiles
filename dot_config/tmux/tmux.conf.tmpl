@@ -36,3 +36,34 @@ set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
 
 run '~/.tmux/plugins/tpm/tpm'
+
+# ----------------------
+# Solarized Dark Palette
+# ----------------------
+# default statusbar colors
+set -g status-style bg='#073642',fg='#839496'
+
+# default window title colors
+setw -g window-status-style fg='#839496',bg=default
+
+# active window title colors
+setw -g window-status-current-style fg='#b58900',bold,bg=default
+
+# pane border
+set -g pane-border-style fg='#073642'
+set -g pane-active-border-style fg='#586e75'
+
+# message text
+set -g message-style bg='#073642',fg='#cb4b16'
+
+# pane number display
+set -g display-panes-active-colour '#268bd2'
+set -g display-panes-colour '#b58900'
+
+# clock
+setw -g clock-mode-colour '#859900'
+
+# status bar formatting
+set -g status-left-length 30
+set -g status-left '#[fg=#859900,bold]#S #[fg=#586e75]│ '
+set -g status-right '#[fg=#586e75]│ #[fg=#268bd2]%Y-%m-%d %H:%M '
