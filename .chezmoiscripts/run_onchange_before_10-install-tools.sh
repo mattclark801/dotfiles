@@ -105,4 +105,12 @@ else
   echo "Quarto already installed."
 fi
 
+# 11. Zathura & MuPDF backend (for live PDF viewing via WSLg)
+if ! command -v zathura &>/dev/null; then
+  echo "Installing Zathura and PDF backend..."
+  sudo apt-get update -qq && sudo apt-get install -y -qq zathura zathura-pdf-poppler
+else
+  echo "Zathura already installed."
+fi
+
 echo "==> All tools provisioned."
