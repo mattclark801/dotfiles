@@ -23,7 +23,16 @@ else
   echo "fnm already installed."
 fi
 
-# 3. Claude Code (native/standalone curl installer)
+# 3. Vim with clipboard support (+clipboard)
+if ! vim --version | grep -qw '\+clipboard'; then
+  echo "Configuring vim-gtk3 for clipboard support..."
+  sudo apt-get update -qq && sudo apt-get install -y -qq vim-gtk3
+  sudo update-alternatives --set vim /usr/bin/vim.gtk3
+else
+  echo "vim with clipboard support already active."
+fi
+
+# 4. Claude Code (native/standalone curl installer)
 if ! command -v claude &>/dev/null; then
   echo "Installing Claude Code..."
   curl -fsSL https://claude.ai/install.sh | bash
@@ -31,15 +40,15 @@ else
   echo "Claude Code already installed."
 fi
 
-# 4. Antigravity (standalone curl installer)
-if ! command -v antigravity &>/dev/null; then
+# 5. Antigravity (standalone curl installer)
+if ! command -v agy &>/dev/null && ! command -v antigravity &>/dev/null; then
   echo "Installing Antigravity..."
   curl -fsSL https://antigravity.google/cli/install.sh | bash
 else
-  echo "Antigravity already installed."
+  echo "Antigravity (agy) already installed."
 fi
 
-# 5. Azure CLI
+# 6. Azure CLI
 if ! command -v az &>/dev/null; then
   echo "Installing Azure CLI..."
   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -47,7 +56,7 @@ else
   echo "Azure CLI already installed."
 fi
 
-# 6. Markdown TUI (glow)
+# 7. Markdown TUI (glow)
 if ! command -v glow &>/dev/null; then
   echo "Installing glow..."
   # Charmbracelet official apt setup
@@ -57,6 +66,19 @@ if ! command -v glow &>/dev/null; then
   sudo apt-get update -qq && sudo apt-get install -y -qq glow
 else
   echo "glow already installed."
+fi
+
+# 7. Gemini CLI (via fnm & npm)
+if ! command -v gemini &>/dev/null; then
+  echo "Installing Gemini CLI..."
+  export PATH="$HOME/.local/share/fnm:$PATH"
+  eval "$(fnm env --use-on-cd)"
+  fnm install --lts
+  fnm default lts-latest
+  fnm use default
+  npm install -g @google/gemini-cli
+else
+  echo "Gemini CLI already installed."
 fi
 
 echo "==> All tools provisioned."
