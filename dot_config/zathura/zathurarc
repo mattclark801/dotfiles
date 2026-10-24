@@ -6,22 +6,5 @@ set window-title-basename true
 set pages-per-row 1
 set scroll-step 40
 
-# Solarized Dark Theme Palette
-set default-bg "#002b36"
-set default-fg "#839496"
-set statusbar-bg "#073642"
-set statusbar-fg "#93a1a1"
-set inputbar-bg "#002b36"
-set inputbar-fg "#839496"
-set notification-bg "#073642"
-set notification-fg "#2aa198"
-set notification-error-bg "#dc322f"
-set notification-error-fg "#eee8d5"
-set notification-warning-bg "#b58900"
-set notification-warning-fg "#002b36"
-set highlight-color "rgba(181, 137, 0, 0.5)"
-set highlight-active-color "rgba(38, 139, 210, 0.5)"
-set recolor-lightcolor "#002b36"
-set recolor-darkcolor "#93a1a1"
-set recolor "true"
-set recolor-keephue "true"
+# Render authentic document colors by default (press Ctrl+r to toggle recolor)
+set recolor false
