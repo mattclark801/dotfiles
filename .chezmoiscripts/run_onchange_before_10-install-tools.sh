@@ -113,4 +113,24 @@ else
   echo "Evince already installed."
 fi
 
+# 12. Obsidian (native GUI via WSLg)
+if ! command -v obsidian &>/dev/null; then
+  echo "Installing Obsidian via .deb..."
+  OBSIDIAN_DEB="/tmp/obsidian.deb"
+  OBSIDIAN_URL=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest \
+    | grep "browser_download_url.*_amd64.deb" \
+    | cut -d '"' -f 4)
+
+  if [ -n "$OBSIDIAN_URL" ]; then
+    curl -sL "$OBSIDIAN_URL" -o "$OBSIDIAN_DEB"
+    sudo apt-get update -qq && sudo apt-get install -y -qq "$OBSIDIAN_DEB"
+    rm -f "$OBSIDIAN_DEB"
+  else
+    echo "Warning: Could not fetch Obsidian download URL."
+  fi
+else
+  echo "Obsidian already installed."
+fi
+
 echo "==> All tools provisioned."
+
