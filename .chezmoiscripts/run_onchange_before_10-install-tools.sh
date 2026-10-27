@@ -23,12 +23,15 @@ else
   echo "fnm already installed."
 fi
 
-# 3. Neovim (modern Vim replacement with clipboard)
+# 3. Neovim (modern release) and clipboard support
 if ! command -v nvim &> /dev/null; then
-  echo "Installing neovim and clipboard support..."
-  sudo apt-get update -qq && sudo apt-get install -y -qq neovim xclip
+  echo "Installing Neovim from official GitHub release..."
+  wget -qO /tmp/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+  sudo tar -C /usr/local --strip-components=1 -xzf /tmp/nvim.tar.gz
+  rm /tmp/nvim.tar.gz
+  sudo apt-get install -y -qq xclip
 else
- echo "Neovim is already installed."
+  echo "Neovim is already installed."
 fi
 
 # 4. Claude Code (native/standalone curl installer)

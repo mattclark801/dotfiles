@@ -20,12 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- 4. Start Lazy and Install Plugins
 require("lazy").setup({
-  -- Mason: The LSP app store
-  { "williamboman/mason.nvim", config = true },
-  
-  -- Bridge between Mason and Neovim
-  { "williamboman/mason-lspconfig.nvim" },
-  
-  -- Neovim's native LSP configuration
-  { "neovim/nvim-lspconfig" },
+	{ "williamboman/mason.nvim", config = true },
+	{ "williamboman/mason-lspconfig.nvim" },
+	{ "neovim/nvim-lspconfig" },
 })
