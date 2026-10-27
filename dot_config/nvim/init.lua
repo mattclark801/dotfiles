@@ -37,7 +37,6 @@ require("lazy").setup({
         ensure_installed = { "pyright", "sqlls", "tinymist" }
       })
       
-      -- Modern Neovim 0.11+ way to start language servers
       vim.lsp.enable("pyright")
       vim.lsp.enable("sqlls")
       vim.lsp.enable("tinymist")
@@ -66,6 +65,14 @@ require("lazy").setup({
           { name = "nvim_lsp" },
         })
       })
+      
+      -- Enable Dadbod table/column auto-completion strictly for SQL files
+      cmp.setup.filetype({ "sql" }, {
+        sources = {
+          { name = "vim-dadbod-completion" },
+          { name = "buffer" },
+        }
+      })
     end,
   },
 
@@ -79,5 +86,21 @@ require("lazy").setup({
       vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find Files" })
       vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = "Live Grep" })
     end
+  },
+
+  -- Database Interface (Vim-Dadbod)
+  {
+    "kristijanhusak/vim-dadbod-ui",
+    dependencies = {
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+    },
+    cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+    keys = {
+      { "<leader>db", "<cmd>DBUIToggle<CR>", desc = "Toggle DB UI" },
+    },
+    init = function()
+      vim.g.db_ui_use_nerd_fonts = 1
+    end,
   }
 })
