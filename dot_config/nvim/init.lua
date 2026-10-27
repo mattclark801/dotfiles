@@ -1,7 +1,9 @@
 -- 1. Basic Settings
+vim.g.mapleader = " " -- Sets the Spacebar as your master shortcut key
 vim.opt.clipboard = "unnamedplus"
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
 -- 2. Keybindings
 vim.keymap.set("i", "jk", "<Esc>")
@@ -20,8 +22,9 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- 4. Load Plugins and Configure LSPs
+-- 4. Load Plugins
 require("lazy").setup({
+  -- Language Servers
   {
     "neovim/nvim-lspconfig",
     dependencies = {
@@ -39,5 +42,42 @@ require("lazy").setup({
       vim.lsp.enable("sqlls")
       vim.lsp.enable("tinymist")
     end,
+  },
+  
+  -- Auto-Completion Engine
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "L3MON4D3/LuaSnip",
+    },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require("luasnip").lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        }),
+        sources = cmp.config.sources({
+          { name = "nvim_lsp" },
+        })
+      })
+    end,
+  },
+
+  -- Fuzzy Finder (Telescope)
+  {
+    "nvim-telescope/telescope.nvim",
+    branch = "0.1.x",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local builtin = require("telescope.builtin")
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find Files" })
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = "Live Grep" })
+    end
   }
 })
