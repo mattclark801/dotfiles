@@ -23,13 +23,12 @@ else
   echo "fnm already installed."
 fi
 
-# 3. Vim with clipboard support (+clipboard)
-if ! vim --version | grep -qw '\+clipboard'; then
-  echo "Configuring vim-gtk3 for clipboard support..."
-  sudo apt-get update -qq && sudo apt-get install -y -qq vim-gtk3
-  sudo update-alternatives --set vim /usr/bin/vim.gtk3
+# 3. Neovim (modern Vim replacement with clipboard)
+if ! command -v nvim &> /dev/null; then
+  echo "Installing neovim and clipboard support..."
+  sudo apt-get update -qq && sudo apt-get install -y -qq neovim xclip
 else
-  echo "vim with clipboard support already active."
+ echo "Neovim is already installed."
 fi
 
 # 4. Claude Code (native/standalone curl installer)

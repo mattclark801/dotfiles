@@ -3,3 +3,4 @@ inoremap jk <Esc>
 
 " Sync Vim default register with OS clipboard (+clipboard)
 set clipboard=unnamedplus
+
