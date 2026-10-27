@@ -1,17 +1,27 @@
-add_newline = false
+# Insert a blank line between shell prompts
+add_newline = true
 
+# Customize the prompt character
 [character]
-success_symbol = "[➜](bold #859900)"
-error_symbol = "[✗](bold #dc322f)"
+success_symbol = "[❯](bold #859900)" # Solarized Green
+error_symbol = "[❯](bold #dc322f)"   # Solarized Red
 
+# Style the current directory
 [directory]
+style = "bold #2aa198"               # Solarized Cyan
 truncation_length = 3
-truncate_to_repo = true
-style = "bold #268bd2"
+truncate_to_repo = false
 
+# Style the Git branch indicator
 [git_branch]
-symbol = " "
-style = "bold #b58900"
+symbol = "🌱 "
+style = "bold #d33682"               # Solarized Magenta
 
-[git_status]
-style = "bold #cb4b16"
+# Show execution time for long commands
+[cmd_duration]
+min_time = 2000
+format = "took [$duration](bold #b58900) " # Solarized Yellow
+
+# Hide the Python virtual environment unless explicitly wanted
+[python]
+format = 'via [${symbol}${version}](bold #268bd2) ' # Solarized Blue
