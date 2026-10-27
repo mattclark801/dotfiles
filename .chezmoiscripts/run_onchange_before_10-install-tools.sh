@@ -134,5 +134,20 @@ else
   echo "Obsidian already installed."
 fi
 
+# 4. Database Command Line Clients (PostgreSQL & SQL Server)
+echo "Checking database clients..."
+sudo apt-get install -y -qq postgresql-client
+
+if ! command -v sqlcmd &> /dev/null; then
+  echo "Installing Microsoft SQL Server tools..."
+  curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/microsoft-prod.gpg
+  curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+  sudo apt-get update
+  sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
+  
+  # Expose sqlcmd to the global system path for Vim-Dadbod
+  sudo ln -sf /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd
+fi
+
 echo "==> All tools provisioned."
 
