@@ -1,5 +1,7 @@
 -- 1. Basic Settings
 vim.opt.clipboard = "unnamedplus"
+vim.opt.number = true
+vim.opt.relativenumber = true
 
 -- 2. Keybindings
 vim.keymap.set("i", "jk", "<Esc>")
@@ -18,9 +20,24 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- 4. Start Lazy and Install Plugins
+-- 4. Load Plugins and Configure LSPs
 require("lazy").setup({
-	{ "williamboman/mason.nvim", config = true },
-	{ "williamboman/mason-lspconfig.nvim" },
-	{ "neovim/nvim-lspconfig" },
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+    },
+    config = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "pyright", "sqlls", "tinymist" }
+      })
+      
+      -- Modern Neovim 0.11+ way to start language servers
+      vim.lsp.enable("pyright")
+      vim.lsp.enable("sqlls")
+      vim.lsp.enable("tinymist")
+    end,
+  }
 })
