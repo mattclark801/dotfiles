@@ -178,8 +178,8 @@ if command -v apt >/dev/null 2>&1; then
 fi
 
 # 13.8 Podman & Podman Compose (Cross-Platform)
-if ! command -v podman &> /dev/null; then
-    echo "Installing Podman..."
+if ! command -v podman &> /dev/null || ! command -v podman-compose &> /dev/null; then
+    echo "Installing Podman and Podman Compose..."
     if command -v apt-get &> /dev/null; then
         sudo apt-get install -y -qq podman podman-compose
     elif command -v brew &> /dev/null; then
@@ -188,8 +188,9 @@ if ! command -v podman &> /dev/null; then
         echo "Warning: Package manager not found. Please install Podman manually."
     fi
 else
-    echo "Podman is already installed."
+    echo "Podman and Podman Compose are already installed."
 fi
+
 # 14. Map Podman to Docker for AI agents and build tools
 echo "Mapping Podman to Docker..."
 if command -v podman &> /dev/null; then
