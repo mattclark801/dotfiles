@@ -65,12 +65,27 @@ else
   echo "Antigravity (agy) already installed."
 fi
 
-# 6. Azure CLI
-if ! command -v az &>/dev/null; then
-  echo "Installing Azure CLI..."
-  curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-else
-  echo "Azure CLI already installed."
+# 6. OS-Specific Setup: Debian/Ubuntu (WSL/Linux)
+if command -v apt >/dev/null 2>&1; then
+    echo "==> Securing Microsoft Repositories for Ubuntu 24.04..."
+    sudo mkdir -p /etc/apt/keyrings
+    
+    # 1. Download one master Microsoft key to the modern keyring folder
+    curl -sLS https://packages.microsoft.com/keys/microsoft.asc | \
+        sudo gpg --dearmor --yes -o /etc/apt/keyrings/microsoft.gpg
+    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
+
+    # 2. Bind Azure CLI repo to the master key
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli noble main" | \
+        sudo tee /etc/apt/sources.list.d/azure-cli.list > /dev/null
+
+    # 3. Bind SQL Server repo to the master key
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" | \
+        sudo tee /etc/apt/sources.list.d/mssql-release.list > /dev/null
+    
+    # 4. Clean up any legacy poison and update
+    sudo rm -f /etc/apt/trusted.gpg.d/microsoft*.gpg /usr/share/keyrings/microsoft*.gpg
+    sudo apt-get update -qq
 fi
 
 # 7. Markdown TUI (glow)
@@ -149,22 +164,18 @@ else
   echo "Obsidian already installed."
 fi
 
-# 13. Database Command Line Clients (PostgreSQL & SQL Server)
+# 13. Database Command Line Clients (PostgreSQL)
 echo "Checking database clients..."
 sudo apt-get install -y -qq postgresql-client
 
-if ! command -v sqlcmd &> /dev/null; then
-    echo "Installing Microsoft SQL Server tools..."
-    # 1. Store the key in the modern keyrings directory
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/keyrings/microsoft-prod.gpg
-    
-    # 2. Write the source list manually, forcing the signed-by tag
-    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" | sudo tee /etc/apt/sources.list.d/mssql-release.list > /dev/null
-    
-    # 3. Update and install silently
-    sudo apt-get update
-    sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
+# 14. Map Podman to Docker for AI agents and build tools
+echo "Mapping Podman to Docker..."
+if command -v podman &> /dev/null; then
+    ln -sf "$(which podman)" "$HOME/.local/bin/docker" 2>/dev/null || true
+fi
+
+if command -v podman-compose &> /dev/null; then
+    ln -sf "$(which podman-compose)" "$HOME/.local/bin/docker-compose" 2>/dev/null || true
 fi
 
 echo "==> All tools provisioned."
