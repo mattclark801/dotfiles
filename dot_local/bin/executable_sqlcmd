@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+export OPENSSL_CONF=$HOME/.legacy_sql_openssl.cnf
+# Ensure VPN static route exists silently via Windows Task Scheduler
+schtasks.exe /run /TN "WSL-SQL-Route" > /dev/null 2>&1
+exec /opt/mssql-tools18/bin/sqlcmd -N o -C "$@"

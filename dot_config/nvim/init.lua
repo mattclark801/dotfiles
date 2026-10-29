@@ -34,11 +34,10 @@ require("lazy").setup({
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "sqlls", "tinymist" }
+        ensure_installed = { "pyright", "tinymist" }
       })
       
       vim.lsp.enable("pyright")
-      vim.lsp.enable("sqlls")
       vim.lsp.enable("tinymist")
     end,
   },

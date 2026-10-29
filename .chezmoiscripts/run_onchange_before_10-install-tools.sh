@@ -23,11 +23,17 @@ else
   echo "fnm already installed."
 fi
 
+# 2.5 Initialize fnm in this subshell and install the latest LTS version of Node.js
+eval "$(fnm env --fnm-dir "$HOME/.local/share/fnm")"
+fnm install --lts
+fnm default lts-latest 
+
 # 3. Neovim (modern release) and clipboard support
 if ! command -v nvim &> /dev/null; then
   echo "Installing Neovim from official GitHub release..."
   wget -qO /tmp/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-  sudo tar -C /usr/local --strip-components=1 -xzf /tmp/nvim.tar.gz
+  mkdir -p $HOME/.local
+  tar -C $HOME/.local --strip-components=1 -xzf /tmp/nvim.tar.gz
   rm /tmp/nvim.tar.gz
   sudo apt-get install -y -qq xclip
 else
@@ -134,19 +140,16 @@ else
   echo "Obsidian already installed."
 fi
 
-# 4. Database Command Line Clients (PostgreSQL & SQL Server)
+# 13. Database Command Line Clients (PostgreSQL & SQL Server)
 echo "Checking database clients..."
 sudo apt-get install -y -qq postgresql-client
 
 if ! command -v sqlcmd &> /dev/null; then
-  echo "Installing Microsoft SQL Server tools..."
-  curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/microsoft-prod.gpg
-  curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-  sudo apt-get update
-  sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
-  
-  # Expose sqlcmd to the global system path for Vim-Dadbod
-  sudo ln -sf /opt/mssql-tools18/bin/sqlcmd /usr/local/bin/sqlcmd
+   echo "Installing Microsoft SQL Server tools..."
+   curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/microsoft-prod.gpg
+   curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+   sudo apt-get update
+   sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
 fi
 
 echo "==> All tools provisioned."

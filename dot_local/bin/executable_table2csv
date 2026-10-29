@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+import sys, csv, re
+
+lines = sys.stdin.read().splitlines()
+if not lines: sys.exit(0)
+
+# Find the hyphen row which dictates column widths
+try:
+    hyphen_idx = next(i for i, line in enumerate(lines) if set(line.strip()) <= {'-', ' '} and '-' in line)
+except StopIteration:
+    for line in lines: print(line)
+    sys.exit(0)
+
+# Map the exact start and end character positions of each column
+cols = [(m.start(), m.end()) for m in re.finditer(r'-+', lines[hyphen_idx])]
+
+writer = csv.writer(sys.stdout)
+for i, line in enumerate(lines):
+    if i == hyphen_idx: continue # Drop the hyphen row
+    if not line.strip(): continue # Drop empty trailing lines
+    if re.match(r'^\(\d+ rows affected\)$', line.strip()): continue # Drop the sqlcmd footer
+    
+    # Slice the string perfectly and strip padding spaces
+    writer.writerow([line[start:end].strip() for start, end in cols])
