@@ -168,6 +168,28 @@ fi
 echo "Checking database clients..."
 sudo apt-get install -y -qq postgresql-client
 
+# 13.5 Install Microsoft Tools (Azure CLI & SQL Tools)
+if command -v apt >/dev/null 2>&1; then
+    if ! command -v az &>/dev/null || ! command -v sqlcmd &>/dev/null; then
+        echo "Installing Azure CLI and SQL Server tools..."
+        sudo apt-get install -y -qq azure-cli
+        sudo ACCEPT_EULA=Y apt-get install -y -qq msodbcsql18 mssql-tools18
+    fi
+fi
+
+# 13.8 Podman & Podman Compose (Cross-Platform)
+if ! command -v podman &> /dev/null; then
+    echo "Installing Podman..."
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get install -y -qq podman podman-compose
+    elif command -v brew &> /dev/null; then
+        brew install podman podman-compose
+    else
+        echo "Warning: Package manager not found. Please install Podman manually."
+    fi
+else
+    echo "Podman is already installed."
+fi
 # 14. Map Podman to Docker for AI agents and build tools
 echo "Mapping Podman to Docker..."
 if command -v podman &> /dev/null; then
