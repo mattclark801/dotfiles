@@ -154,11 +154,17 @@ echo "Checking database clients..."
 sudo apt-get install -y -qq postgresql-client
 
 if ! command -v sqlcmd &> /dev/null; then
-   echo "Installing Microsoft SQL Server tools..."
-   curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/microsoft-prod.gpg
-   curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-   sudo apt-get update
-   sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
+    echo "Installing Microsoft SQL Server tools..."
+    # 1. Store the key in the modern keyrings directory
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --yes --dearmor -o /etc/apt/keyrings/microsoft-prod.gpg
+    
+    # 2. Write the source list manually, forcing the signed-by tag
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" | sudo tee /etc/apt/sources.list.d/mssql-release.list > /dev/null
+    
+    # 3. Update and install silently
+    sudo apt-get update
+    sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
 fi
 
 echo "==> All tools provisioned."
