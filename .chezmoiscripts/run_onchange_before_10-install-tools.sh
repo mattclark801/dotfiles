@@ -177,7 +177,7 @@ if command -v apt >/dev/null 2>&1; then
     fi
 fi
 
-# 13.8 Podman & Podman Compose (Cross-Platform)
+# 13.8 Podman, Podman Compose & Default Registries (Cross-Platform)
 if ! command -v podman &> /dev/null || ! command -v podman-compose &> /dev/null; then
     echo "Installing Podman and Podman Compose..."
     if command -v apt-get &> /dev/null; then
@@ -189,6 +189,15 @@ if ! command -v podman &> /dev/null || ! command -v podman-compose &> /dev/null;
     fi
 else
     echo "Podman and Podman Compose are already installed."
+fi
+
+# Configure Podman to allow short-name image resolution from Docker Hub (fix for WSL/Linux)
+if command -v podman &> /dev/null && [ -d /etc/containers ]; then
+    echo "Configuring default Podman registries..."
+    sudo mkdir -p /etc/containers
+    if ! grep -q "unqualified-search-registries" /etc/containers/registries.conf 2>/dev/null; then
+        echo 'unqualified-search-registries = ["docker.io"]' | sudo tee -a /etc/containers/registries.conf > /dev/null
+    fi
 fi
 
 # 14. Map Podman to Docker for AI agents and build tools
