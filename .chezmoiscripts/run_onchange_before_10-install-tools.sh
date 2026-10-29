@@ -5,6 +5,15 @@ set -euo pipefail
 mkdir -p "$HOME/.local/bin"
 export PATH="$HOME/.local/bin:$PATH"
 
+# OS-Specific Setup: Debian/Ubuntu (WSL)
+if command -v apt >/dev/null 2>&1; then
+    # Fix Microsoft GPG Key missing on fresh Ubuntu installs
+    if [ ! -f /etc/apt/trusted.gpg.d/microsoft.gpg ]; then
+        echo "Installing Microsoft GPG key globally..."
+        curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+    fi
+fi
+
 echo "==> Checking development runtimes and tools..."
 
 # 1. uv (Astral)
