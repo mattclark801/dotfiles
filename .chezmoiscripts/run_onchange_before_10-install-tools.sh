@@ -33,6 +33,7 @@ else
 fi
 
 # 2.5 Initialize fnm in this subshell and install the latest LTS version of Node.js
+export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env --fnm-dir "$HOME/.local/share/fnm")"
 fnm install --lts
 fnm default lts-latest 
@@ -61,8 +62,11 @@ fi
 if ! command -v agy &>/dev/null && ! command -v antigravity &>/dev/null; then
   echo "Installing Antigravity..."
   curl -fsSL https://antigravity.google/cli/install.sh | bash
-else
-  echo "Antigravity (agy) already installed."
+fi
+
+# Ensure agy shorthand symlink exists
+if command -v antigravity &>/dev/null && ! command -v agy &>/dev/null; then
+  ln -sf "$(command -v antigravity)" "$HOME/.local/bin/agy"
 fi
 
 # 6. OS-Specific Setup: Debian/Ubuntu (WSL/Linux)
