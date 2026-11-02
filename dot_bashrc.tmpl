@@ -57,10 +57,9 @@ evince() {
   LIBGL_ALWAYS_SOFTWARE=1 /usr/bin/evince "$@" >/dev/null 2>&1 &
 }
 
-# Auto-start or attach to tmux
+# Auto-start tmux without killing the terminal on exit
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [ -z "$TMUX" ]; then
-    # Attach to an existing session named 'main', or create it if it doesn't exist
-    exec tmux new-session -A -s main
+    tmux new-session -A -s main
 fi
 
 # Zoxide
