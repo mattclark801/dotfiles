@@ -1,0 +1,102 @@
+# ==========================================
+# ZSH OPTIONS & HISTORY
+# ==========================================
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+
+setopt EXTENDED_HISTORY          # Record timestamp and duration
+setopt SHARE_HISTORY             # Share history across running sessions
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first
+setopt HIST_IGNORE_DUPS          # Don't record consecutive duplicates
+setopt HIST_IGNORE_ALL_DUPS      # Delete older duplicates when new added
+setopt HIST_FIND_NO_DUPS         # Do not display duplicates when searching
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks from history
+setopt AUTO_CD                   # Type directory name to cd into it
+
+# Standard Emacs keybindings (prevents accidental Vi-mode lockouts at shell prompt)
+bindkey -e
+
+# ==========================================
+# COMPLETION SYSTEM
+# ==========================================
+autoload -Uz compinit
+# Cache completions for speed (refresh once a day)
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.m+1) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # Case-insensitive tab completion
+zstyle ':completion:*' menu select                          # Arrow-key navigable completion menu
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"     # Colored completions matching ls
+
+# ==========================================
+# HISTORY SEARCH BINDINGS (Up/Down arrow prefix search)
+# ==========================================
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search  # Up Arrow
+bindkey '^[[B' down-line-or-beginning-search # Down Arrow
+
+# ==========================================
+# TOOL INTEGRATIONS & PATHS
+# ==========================================
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# fnm (Fast Node Manager)
+if command -v fnm &>/dev/null; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
+
+# uv (Fast Python Package Installer)
+if command -v uv &>/dev/null; then
+  eval "$(uv generate-shell-completion zsh 2>/dev/null)"
+fi
+
+# zoxide (Smarter cd)
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# fzf keybindings and completion
+if [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+  source /usr/share/doc/fzf/examples/key-bindings.zsh
+  source /usr/share/doc/fzf/examples/completion.zsh
+elif [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
+fi
+
+# ==========================================
+# OS-SPECIFIC SETTINGS
+# ==========================================
+{{ if and (eq .chezmoi.os "linux") (contains "microsoft" (lower .chezmoi.kernel.osrelease)) }}
+# WSL2 on Windows 11 specific paths and aliases
+alias open="explorer.exe"
+{{ else if eq .chezmoi.os "linux" }}
+# Native Linux Mint specific aliases
+alias open="xdg-open"
+{{ end }}
+
+# Common Aliases
+alias ll='ls -la --color=auto'
+alias gs='git status'
+alias cm='chezmoi'
+
+# ==========================================
+# PLUGINS (Source before prompt)
+# ==========================================
+[ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Custom autosuggestion styling (subtle muted gray)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+
+# ==========================================
+# STARSHIP PROMPT (Must be initialized last)
+# ==========================================
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
