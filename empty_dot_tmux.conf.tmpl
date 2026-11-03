@@ -1,0 +1,24 @@
+# General settings
+set -g mouse on
+set-window-option -g mode-keys vi
+set -g default-shell /usr/bin/zsh
+
+# --- Cross-Platform Clipboard Integration ---
+{{ if and (eq .chezmoi.os "linux") (contains "microsoft" (lower .chezmoi.kernel.osrelease)) }}
+# WSL2 on Windows 11
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "clip.exe"
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "clip.exe"
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clip.exe"
+bind-key P run-shell "powershell.exe -NoProfile -Command Get-Clipboard | tr -d '\\r' | tmux load-buffer - && tmux paste-buffer"
+
+{{ else if eq .chezmoi.os "linux" }}
+# Native Linux Mint (X11 / XFCE)
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -in"
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -in"
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -selection clipboard -in"
+bind-key P run-shell "xclip -selection clipboard -out | tmux load-buffer - && tmux paste-buffer"
+
+{{ end }}
+
+# Left-click clears selection and dismisses copy mode
+bind-key -T copy-mode-vi MouseDown1Pane send-keys -X clear-selection \; send-keys -X cancel
