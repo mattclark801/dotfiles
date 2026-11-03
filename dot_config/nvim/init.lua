@@ -59,6 +59,7 @@ require("lazy").setup({
         },
         mapping = cmp.mapping.preset.insert({
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Enter key confirms
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
